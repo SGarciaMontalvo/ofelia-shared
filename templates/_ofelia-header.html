@@ -29,12 +29,13 @@
 
     <nav class="ofelia-topbar__sections" aria-label="OFELIA suite">
       {% for label, path in ofelia_sections %}
-        {% set is_selected = (path == app_path) %}
-        <a class="ofelia-topbar__section{{ ' ofelia-topbar__section--selected' if is_selected else '' }}"
-           href="{{ path }}"
-           {{ 'aria-current="page"' if is_selected else '' }}>
-          {{ label }}
-        </a>
+        {% if path == app_path %}
+          <a class="ofelia-topbar__section ofelia-topbar__section--selected"
+             href="{{ path }}"
+             aria-current="page">{{ label }}</a>
+        {% else %}
+          <a class="ofelia-topbar__section" href="{{ path }}">{{ label }}</a>
+        {% endif %}
       {% endfor %}
     </nav>
 
