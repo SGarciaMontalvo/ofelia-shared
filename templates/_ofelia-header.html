@@ -1,30 +1,45 @@
 {# Partial: top bar (header sticky)
 
-   Replica visual de los componentes React MainNavigationBar y
-   HeaderLayout de Mistica, implementada en CSS utility classes
-   `ofelia-*` que viven en `ofelia-base.css`. No hay contraparte CSS
-   plano en el bundle oficial de Mistica, asi que este patron canonico
-   se materializa localmente consumiendo unicamente tokens `--mistica-*`.
+   Replica visual del React MainNavigationBar de Mistica. La estructura
+   canonica del componente (fuente: src/navigation-bar.tsx + .css.ts):
+     - brand/logo a la izquierda
+     - sections (tabs) en el centro con border-bottom 2px transparent
+       que se vuelve controlActivated (brand) cuando la seccion esta
+       seleccionada
+     - right slot (opcional) para acciones derechas
+     - altura fija 56px (NAVBAR_HEIGHT_DESKTOP en Mistica)
+
+   NO hay utility classes CSS oficiales para nav/header en el bundle
+   compilado de Mistica (verificado contra el upstream). El patron se
+   replica fielmente consumiendo unicamente tokens --mistica-* ya
+   existentes.
 
    Variables esperadas del contexto Flask (inyectadas via
-   context_processor en `app/__init__.py`):
-     - app_brand    (str)  "Tareas" / "Bitacora" / ...
-     - app_logo     (str)  "tareas.svg" / "bitacora.svg" / ...
+   context_processor en app/__init__.py):
      - app_path     (str)  "/tareas/" / "/bitacora/" / ...
      - alexandria_logo_url (str)  url_for('static', filename='logos/alexandria.png')
-                                 o `static/logos/alexandria.png` si la app no
-                                 tiene esa ruta.
+                                 ya disponible en el partial via static sync.
    #}
+{% include "_ofelia-sections.html" %}
 <header class="ofelia-topbar" role="banner">
   <div class="ofelia-topbar__inner">
-    <a class="ofelia-brand ofelia-brand--alexandria" href="/" aria-label="Ir a Alexandria (launcher general)">
-      <img class="ofelia-brand__logo" src="{{ alexandria_logo_url }}" alt="Alexandria" />
-      <span class="ofelia-brand__name">Alexandria</span>
+    <a class="ofelia-topbar__brand" href="/" aria-label="Alexandria launcher general">
+      <img src="{{ alexandria_logo_url }}" alt="Alexandria" />
     </a>
 
-    <div class="ofelia-brand ofelia-brand--app" aria-current="page">
-      <img class="ofelia-brand__logo" src="{{ url_for('static', filename='logos/' ~ app_logo) }}" alt="{{ app_brand }}" />
-      <span class="ofelia-brand__name">{{ app_brand }}</span>
+    <nav class="ofelia-topbar__sections" aria-label="OFELIA suite">
+      {% for label, path in ofelia_sections %}
+        {% set is_selected = (path == app_path) %}
+        <a class="ofelia-topbar__section{{ ' ofelia-topbar__section--selected' if is_selected else '' }}"
+           href="{{ path }}"
+           {{ 'aria-current="page"' if is_selected else '' }}>
+          {{ label }}
+        </a>
+      {% endfor %}
+    </nav>
+
+    <div class="ofelia-topbar__right">
+      {% block topbar_right %}{% endblock %}
     </div>
   </div>
 </header>

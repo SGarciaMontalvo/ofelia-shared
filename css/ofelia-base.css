@@ -689,82 +689,100 @@ a:hover {
 }
 
 /* ============================================================================
- * 14. App bar — header sticky + footer minimal (patron visual de
- *    Mistica <MainNavigationBar> + <HeaderLayout> + <Footer>)
+ * 14. App bar — header sticky tipo MainNavigationBar
  *
-    Estos componentes React de Mistica NO tienen contraparte en CSS plano
-    (el bundle compilado tiene 0 utility classes para navigation/header/
-    footer — verificado contra el upstream oficial). Implementamos el
-    patron visualmente canonico con utility classes locales `ofelia-*`
-    consumiendo unicamente los tokens `--mistica-color-*` y
-    `--mistica-spacing-*` ya existentes.
+    Replica visual del React <MainNavigationBar> de Mistica (NO utility
+    classes CSS oficiales para nav/header en el bundle compilado).
+    Patron canónico:
+      - height: NAVBAR_HEIGHT_DESKTOP (~56px)
+      - paddingX 8 por section
+      - border-bottom 2px transparent → controlActivated al selected
+      - transition border-color 300ms ease-in-out
+      - text-color hover → secondary
+    Consumimos unicamente tokens `--mistica-color-*`.
  * ========================================================================== */
 
 .ofelia-topbar {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--mistica-color-backgroundAppBar, var(--mistica-color-backgroundContainer, #ffffff));
-  border-bottom: 1px solid var(--mistica-color-borderLow, var(--mistica-color-border, #dfdbd6));
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   height: 56px;
+  background: var(--mistica-color-backgroundContainer, #ffffff);
+  border-bottom: 1px solid var(--mistica-color-borderLow, #dfdbd6);
   display: flex;
-  align-items: center;
-  padding: 0 var(--ofelia-spacing-md);
+  align-items: stretch;
 }
 
 .ofelia-topbar__inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  height: 100%;
   width: 100%;
   max-width: min(1400px, 100%);
   margin: 0 auto;
-  gap: var(--ofelia-spacing-md);
+  padding: 0 var(--ofelia-spacing-md);
+  gap: var(--ofelia-spacing-lg);
 }
 
-.ofelia-brand {
+.ofelia-topbar__brand {
   display: inline-flex;
   align-items: center;
-  gap: var(--ofelia-spacing-sm);
-  text-decoration: none;
-  color: inherit;
-  font-family: inherit;
+  height: 100%;
+  padding-right: var(--ofelia-spacing-md);
+  border-right: 1px solid var(--mistica-color-borderLow, #dfdbd6);
+  margin-right: var(--ofelia-spacing-xs);
 }
 
-.ofelia-brand:hover {
-  text-decoration: none;
-  color: inherit;
-}
-
-.ofelia-brand__logo {
-  width: 32px;
+.ofelia-topbar__brand img {
   height: 32px;
-  border-radius: var(--mistica-border-radius-bar, 999px);
-  object-fit: cover;
+  width: auto;
+  display: block;
 }
 
-.ofelia-brand__name {
-  font-size: var(--mistica-font-size-navigationBar, var(--mistica-font-size-text3, 1rem));
-  font-weight: var(--mistica-font-weight-navigationBar, var(--mistica-font-weight-text3, 500));
-  line-height: var(--mistica-line-height-navigationBar, 1.25);
-  color: var(--mistica-color-textPrimary, #262423);
-}
-
-.ofelia-brand--app .ofelia-brand__name {
-  color: var(--mistica-color-textAppBar, var(--mistica-color-textPrimary, #262423));
-}
-
-.ofelia-brand--alexandria {
-  color: var(--mistica-color-textBrand, var(--mistica-color-backgroundBrand, #0066ff));
-}
-
-.ofelia-brand--alexandria:hover {
+.ofelia-topbar__brand:hover {
   opacity: 0.85;
 }
 
-.ofelia-topbar__spacer {
+.ofelia-topbar__sections {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
   flex: 1;
+  gap: 0;
+}
+
+.ofelia-topbar__section {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 var(--ofelia-spacing-md);
+  font-size: var(--mistica-font-size-text2, 1rem);
+  font-weight: var(--mistica-font-weight-text2, 400);
+  color: var(--mistica-color-textPrimary, #262423);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color 300ms ease-in-out, color 150ms ease;
+  white-space: nowrap;
+  background: transparent;
+  font-family: inherit;
+}
+
+.ofelia-topbar__section:hover {
+  color: var(--mistica-color-textSecondary, #605e5c);
+}
+
+.ofelia-topbar__section--selected,
+.ofelia-topbar__section[aria-current="page"] {
+  color: var(--mistica-color-textPrimary, #262423);
+  font-weight: var(--mistica-font-weight-text3, 500);
+  border-bottom-color: var(--mistica-color-controlActivated, var(--mistica-color-backgroundBrand, #0066ff));
+}
+
+.ofelia-topbar__right {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ofelia-spacing-sm);
+  margin-left: auto;
 }
 
 /* ============================================================================
