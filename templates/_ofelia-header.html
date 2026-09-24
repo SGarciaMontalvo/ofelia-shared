@@ -1,4 +1,4 @@
-{# Partial: top bar (header sticky)
+{# Partial: top bar (header sticky tipo MainNavigationBar)
 
    Replica visual del React MainNavigationBar de Mistica. La estructura
    canonica del componente (fuente: src/navigation-bar.tsx + .css.ts):
@@ -17,14 +17,22 @@
    Variables esperadas del contexto Flask (inyectadas via
    context_processor en app/__init__.py):
      - app_path     (str)  "/tareas/" / "/bitacora/" / ...
-     - alexandria_logo_url (str)  url_for('static', filename='logos/alexandria.png')
-                                 ya disponible en el partial via static sync.
+
+   Las sections de la suite OFELIA se definen aqui mismo (single source
+   of truth) en vez de en un partial separado: {% set %} dentro de un
+   {% include %} no siempre propaga al scope del caller en Jinja2.
    #}
-{% include "_ofelia-sections.html" %}
+{% set ofelia_sections = [
+  ('OFELIA',         '/ofelia/'),
+  ('Tareas',         '/tareas/'),
+  ('Bitacora',       '/bitacora/'),
+  ('Expedientes',    '/gestor-expedientes/'),
+  ('Calidad',        '/gestor-sistema-calidad/'),
+] %}
 <header class="ofelia-topbar" role="banner">
   <div class="ofelia-topbar__inner">
     <a class="ofelia-topbar__brand" href="/" aria-label="Alexandria launcher general">
-      <img src="{{ alexandria_logo_url }}" alt="Alexandria" />
+      <img src="{{ url_for('static', filename='logos/alexandria.png') }}" alt="Alexandria" />
     </a>
 
     <nav class="ofelia-topbar__sections" aria-label="OFELIA suite">
