@@ -27,32 +27,46 @@ ofelia-shared/
 └── docs/                    ← documentación de patrones
 ```
 
+> **Skin actual**: `telefonica` (identidad corporativa del holding).
+> Cambiar de skin es trivial: reemplazar `telefonica.css` por la variante
+> correspondiente en `css/mistica.css` y cambiar `data-mistica-skin` en los
+> `<body>` de las 5 apps.
+
 ## Mistica version
 
 | Component | Version | Source |
 | --- | --- | --- |
 | `mistica-common.css` | latest | https://github.com/Telefonica/mistica-web/blob/master/css/mistica-common.css |
 | `movistar.css` | latest | https://github.com/Telefonica/mistica-web/blob/master/css/movistar.css |
+| `telefonica.css` (skin activo) | latest | https://github.com/Telefonica/mistica-web/blob/master/css/telefonica.css |
 | `@telefonica/mistica` (referencia) | latest | https://www.npmjs.com/package/@telefonica/mistica |
 
-Para actualizar Mistica a una nueva versión:
+Para actualizar Mistica a una nueva versión (manteniendo skin `telefonica`):
 
 ```bash
 # Descargar la versión canónica
 curl -sL https://raw.githubusercontent.com/Telefonica/mistica-web/master/css/mistica-common.css > css/mistica-common.css.new
-curl -sL https://raw.githubusercontent.com/Telefonica/mistica-web/master/css/movistar.css > css/movistar.css.new
+curl -sL https://raw.githubusercontent.com/Telefonica/mistica-web/master/css/telefonica.css > css/telefonica.css.new
 
 # Reemplazar y re-concatenar
 mv css/mistica-common.css.new css/mistica-common.css
-mv css/movistar.css.new css/movistar.css
+mv css/telefonica.css.new css/telefonica.css
 cat css/mistica-common.css > css/mistica.css
 echo "" >> css/mistica.css
-echo "/* === movistar skin === */" >> css/mistica.css
-cat css/movistar.css >> css/mistica.css
+echo "/* === telefonica skin === */" >> css/mistica.css
+cat css/telefonica.css >> css/mistica.css
 
 # Commit
 git add css/
 git commit -m "chore(mistica): bump to upstream <version>"
+```
+
+Para cambiar de skin (movistar, vivo, o2, blau, vivo-evolution, esimflag):
+
+```bash
+curl -sL https://raw.githubusercontent.com/Telefonica/mistica-web/master/css/<nuevo-skin>.css > css/<nuevo-skin>.css
+# Regenerar mistica.css con el nuevo skin (ver arriba)
+# En cada app, cambiar <body data-mistica-skin="<nuevo-skin>"> en base.html
 ```
 
 ## Cómo usan este shared las 5 apps
@@ -88,28 +102,34 @@ Después, en `base.html`:
 Y en `<body>`:
 
 ```html
-<body data-mistica-skin="movistar" data-mistica-color-scheme="light">
+<body data-mistica-skin="telefonica" data-mistica-color-scheme="light">
   <main class="mistica-responsive-layout">
     ...
   </main>
 </body>
 ```
 
-## Movistar Sans — fuente corporativa
+## Telefonica Sans — fuente corporativa
 
-Movistar Sans es la fuente designada del skin `movistar` (ver
+Telefonica Sans es la fuente designada del skin `telefonica` (ver
 [Mistica fonts docs](https://github.com/Telefonica/mistica-web/blob/master/doc/fonts.md)).
-**No está disponible públicamente** — los binarios `.woff2` deben
-obtenerse del **brand portal interno de Telefónica**.
+**Sí está disponible públicamente** desde el CDN de Movistar Colombia:
 
-Pesos necesarios:
+```
+https://www.movistar.com.co/assets/fonts/Telefonica-Regular.woff2
+https://www.movistar.com.co/assets/fonts/Telefonica-Bold.woff2
+https://www.movistar.com.co/assets/fonts/Telefonica-Light.woff2
+```
+
+Pesos públicamente disponibles:
 
 | Peso | Archivo esperado |
 | --- | --- |
-| 300 (Light) | `fonts/MovistarSans-Light.woff2` |
-| 400 (Regular) | `fonts/MovistarSans-Regular.woff2` |
-| 500 (Medium) | `fonts/MovistarSans-Medium.woff2` |
-| 700 (Bold) | `fonts/MovistarSans-Bold.woff2` |
+| 300 (Light) | `fonts/TelefonicaSans-Light.woff2` |
+| 400 (Regular) | `fonts/TelefonicaSans-Regular.woff2` |
+| 700 (Bold) | `fonts/TelefonicaSans-Bold.woff2` |
+
+Pesos NO públicos (pedir al equipo de marca): Medium (500), Black, Thin, Italic.
 
 Mientras los archivos no estén presentes, el sistema cae a
 `'Helvetica', 'Arial', sans-serif` automáticamente (declarado en
@@ -118,11 +138,11 @@ Mientras los archivos no estén presentes, el sistema cae a
 ### Helper de instalación
 
 ```bash
-# Tras obtener los .woff2 oficiales (del brand portal interno):
-bash scripts/install-movistar-sans.sh /ruta/a/los/woff2/*.woff2
+# Descarga automática desde el CDN:
+bash scripts/install-telefonica-sans.sh
 
 # Verificación:
-bash scripts/install-movistar-sans.sh --check
+bash scripts/install-telefonica-sans.sh --check
 ```
 
 ## Utility classes disponibles
@@ -164,5 +184,5 @@ pero que **no existen en el build CSS-only**.
 ## License
 
 MIT (this repo). Mistica itself is MIT-licensed by Telefónica.
-Movistar Sans is proprietary and licensed internally by Telefónica —
-do NOT redistribute outside the organization.
+Telefonica Sans is publicly distributed by Movistar Colombia CDN;
+permisos y atribución según los términos del CDN.
