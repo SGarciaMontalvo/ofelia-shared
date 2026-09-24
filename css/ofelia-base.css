@@ -28,50 +28,51 @@
  * ========================================================================== */
 
 /* ============================================================================
- * 1. @font-face — Movistar Sans (skin movistar)
+ * 1. @font-face — Telefonica Sans (skin telefonica)
  *
- * Mistica no inyecta font automáticamente. Los binarios se obtienen del
- * brand portal interno de Telefónica (ver scripts/install-movistar-sans.sh).
- * Mientras los archivos no estén presentes, el sistema cae a:
- *   'Movistar Sans' → 'Helvetica' → 'Arial' → sans-serif del sistema
+ * Mistica no inyecta font automáticamente. Los binarios oficiales viven
+ * en el CDN público de Movistar Colombia:
+ *   https://www.movistar.com.co/assets/fonts/Telefonica-<weight>.woff2
+ * El helper scripts/install-telefonica-sans.sh los baja y los copia
+ * aqui. Sin los archivos, el sistema cae a 'Helvetica' → 'Arial' → system.
  *
- * Versiones a obtener:
- *   MovistarSans-Light.woff2    (300)
- *   MovistarSans-Regular.woff2  (400)
- *   MovistarSans-Medium.woff2   (500)
- *   MovistarSans-Bold.woff2     (700)
+ * Pesos disponibles públicamente: 300 (Light), 400 (Regular), 700 (Bold).
+ * Pesos 500 (Medium) NO están públicamente — comentar la regla cuando
+ * no exista el archivo.
  * ========================================================================== */
 
 @font-face {
-  font-family: 'Movistar Sans';
+  font-family: 'Telefonica Sans';
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url('../fonts/MovistarSans-Light.woff2') format('woff2');
+  src: url('../fonts/TelefonicaSans-Light.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Movistar Sans';
+  font-family: 'Telefonica Sans';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/MovistarSans-Regular.woff2') format('woff2');
+  src: url('../fonts/TelefonicaSans-Regular.woff2') format('woff2');
 }
 
+/* Medium (500) no disponible públicamente — descomentar cuando se tenga el binario.
 @font-face {
-  font-family: 'Movistar Sans';
+  font-family: 'Telefonica Sans';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('../fonts/MovistarSans-Medium.woff2') format('woff2');
+  src: url('../fonts/TelefonicaSans-Medium.woff2') format('woff2');
 }
+*/
 
 @font-face {
-  font-family: 'Movistar Sans';
+  font-family: 'Telefonica Sans';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('../fonts/MovistarSans-Bold.woff2') format('woff2');
+  src: url('../fonts/TelefonicaSans-Bold.woff2') format('woff2');
 }
 
 /* ============================================================================
@@ -103,7 +104,7 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Movistar Sans', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Telefonica Sans', 'Helvetica', 'Arial', sans-serif;
   color: var(--mistica-color-textPrimary);
 }
 
