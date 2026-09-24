@@ -1,0 +1,713 @@
+/* ============================================================================
+ * ofelia-base.css — capa de utilidades corporativas sobre Mistica
+ *
+ * Este archivo construye los patrones UI que Mistica expone como React
+ * components pero que en el build CSS-only no existen. Cada utility
+ * consume EXCLUSIVAMENTE `--mistica-*` (no hex hardcoded) y respeta el
+ * hard-rule global "Usar mistica-web (Telefónica) para TODA UI".
+ *
+ * El skin activo se declara en <body data-mistica-skin="movistar">.
+ * Mistica aplica `body { background: var(--mistica-color-background) }`
+ * automáticamente vía `[data-mistica-skin]` — este archivo NO sobrescribe
+ * esa regla.
+ *
+ * Estructura:
+ *  1. @font-face Movistar Sans (oficial del skin movistar)
+ *  2. Tokens locales de spacing (Mistica no exporta --mistica-spacing-*)
+ *  3. Reset minimalista de body / html
+ *  4. Layout: .stack, .inline, .list, .row, .boxed
+ *  5. Typography helpers sobre mistica-text-*
+ *  6. Callouts y flashes (estados de UI)
+ *  7. Tags (estados de tarea/proyecto/bitácora)
+ *  8. Buttons y links
+ *  9. Forms (.text-input, .select, .textarea)
+ * 10. Breadcrumb
+ * 11. Accordion
+ * 12. Status pills (borrador/activo/archivado)
+ * 13. Utilities varias (.muted, .empty, .page-header)
+ * ========================================================================== */
+
+/* ============================================================================
+ * 1. @font-face — Movistar Sans (skin movistar)
+ *
+ * Mistica no inyecta font automáticamente. Los binarios se obtienen del
+ * brand portal interno de Telefónica (ver scripts/install-movistar-sans.sh).
+ * Mientras los archivos no estén presentes, el sistema cae a:
+ *   'Movistar Sans' → 'Helvetica' → 'Arial' → sans-serif del sistema
+ *
+ * Versiones a obtener:
+ *   MovistarSans-Light.woff2    (300)
+ *   MovistarSans-Regular.woff2  (400)
+ *   MovistarSans-Medium.woff2   (500)
+ *   MovistarSans-Bold.woff2     (700)
+ * ========================================================================== */
+
+@font-face {
+  font-family: 'Movistar Sans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../fonts/MovistarSans-Light.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Movistar Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/MovistarSans-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Movistar Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/MovistarSans-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Movistar Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/MovistarSans-Bold.woff2') format('woff2');
+}
+
+/* ============================================================================
+ * 2. Spacing tokens — Mistica NO exporta --mistica-spacing-*. Definimos una
+ * escala local usando rem para que respete el base font size del navegador.
+ * ========================================================================== */
+
+:root {
+  --ofelia-spacing-xs: 0.25rem;  /* 4px */
+  --ofelia-spacing-sm: 0.5rem;   /* 8px */
+  --ofelia-spacing-md: 1rem;     /* 16px */
+  --ofelia-spacing-lg: 1.5rem;   /* 24px */
+  --ofelia-spacing-xl: 2rem;     /* 32px */
+  --ofelia-spacing-2xl: 3rem;    /* 48px */
+}
+
+/* ============================================================================
+ * 3. Reset minimalista — body, html, form elements, links
+ *
+ * IMPORTANTE: NO seteamos `body { background }` aquí. Mistica lo hace vía
+ * `[data-mistica-skin] { background: var(--mistica-color-background) }`
+ * (ver mistica.css). Si lo sobrescribimos, el fondo Movistar se pierde.
+ * ========================================================================== */
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Movistar Sans', 'Helvetica', 'Arial', sans-serif;
+  color: var(--mistica-color-textPrimary);
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--mistica-color-textLink);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--mistica-color-textLinkHover);
+  text-decoration: underline;
+}
+
+/* ============================================================================
+ * 4. Layout utilities
+ *
+ * En Mistica React estos son componentes: <Stack>, <Inline>, <Row>, <Box>.
+ * En CSS-only los construimos con display: flex + gap.
+ * ========================================================================== */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofelia-spacing-md);
+}
+
+.stack--xs { gap: var(--ofelia-spacing-xs); }
+.stack--sm { gap: var(--ofelia-spacing-sm); }
+.stack--md { gap: var(--ofelia-spacing-md); }
+.stack--lg { gap: var(--ofelia-spacing-lg); }
+.stack--xl { gap: var(--ofelia-spacing-xl); }
+
+.inline {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ofelia-spacing-sm);
+}
+
+.inline--md { gap: var(--ofelia-spacing-md); }
+.inline--lg { gap: var(--ofelia-spacing-lg); }
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofelia-spacing-sm);
+}
+
+/* .row = tarjeta de fila estilo Mistica <Row>.
+   Background container con border y border-radius canónico. */
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofelia-spacing-xs);
+  padding: var(--ofelia-spacing-md);
+  background: var(--mistica-color-backgroundContainer);
+  border: 1px solid var(--mistica-color-borderLow);
+  border-radius: var(--mistica-border-radius-container);
+}
+
+.row__title {
+  font-weight: 700;
+  color: var(--mistica-color-textPrimary);
+}
+
+.row__subtitle,
+.row__description {
+  color: var(--mistica-color-textSecondary);
+}
+
+/* .boxed = contenedor con background container (negative box Mistica) */
+.boxed {
+  background: var(--mistica-color-backgroundContainer);
+  border-radius: var(--mistica-border-radius-container);
+  padding: var(--ofelia-spacing-md);
+}
+
+/* ============================================================================
+ * 5. Typography helpers — para combinar con mistica-text-* en clases custom
+ * ========================================================================== */
+
+.muted {
+  color: var(--mistica-color-textSecondary);
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofelia-spacing-xs);
+  margin-bottom: var(--ofelia-spacing-lg);
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.page-header__subtitle {
+  color: var(--mistica-color-textSecondary);
+}
+
+/* ============================================================================
+ * 6. Callouts y flashes
+ *
+ * En Mistica React: <Callout>. Estados: success / warning / error / info /
+ * brand / neutral. El color de fondo es la versión "Low" (suave) y el color
+ * de texto es la versión "High" (intenso) del mismo tono.
+ * ========================================================================== */
+
+.callout {
+  padding: var(--ofelia-spacing-md);
+  border-radius: var(--mistica-border-radius-popup);
+  border-left: 4px solid var(--mistica-color-border);
+  background: var(--mistica-color-neutralLow);
+  color: var(--mistica-color-textPrimary);
+}
+
+.callout--success {
+  background: var(--mistica-color-successLow);
+  border-left-color: var(--mistica-color-success);
+  color: var(--mistica-color-successHigh);
+}
+
+.callout--warning {
+  background: var(--mistica-color-warningLow);
+  border-left-color: var(--mistica-color-warning);
+  color: var(--mistica-color-warningHigh);
+}
+
+.callout--error {
+  background: var(--mistica-color-errorLow);
+  border-left-color: var(--mistica-color-error);
+  color: var(--mistica-color-errorHigh);
+}
+
+.callout--info {
+  background: var(--mistica-color-infoLow);
+  border-left-color: var(--mistica-color-info);
+  color: var(--mistica-color-infoHigh);
+}
+
+.callout--brand {
+  background: var(--mistica-color-backgroundBrand);
+  border-left-color: var(--mistica-color-backgroundBrandBottom);
+  color: var(--mistica-color-textPrimaryInverse);
+}
+
+/* .flash-* son los flashed messages de Flask (get_flashed_messages).
+   Mismo patrón que callout pero más compacto. */
+.flash {
+  padding: var(--ofelia-spacing-sm) var(--ofelia-spacing-md);
+  border-radius: var(--mistica-border-radius-popup);
+  margin-bottom: var(--ofelia-spacing-sm);
+}
+
+.flash--success {
+  background: var(--mistica-color-successLow);
+  color: var(--mistica-color-successHigh);
+}
+
+.flash--error {
+  background: var(--mistica-color-errorLow);
+  color: var(--mistica-color-errorHigh);
+}
+
+.flash--warning {
+  background: var(--mistica-color-warningLow);
+  color: var(--mistica-color-warningHigh);
+}
+
+.flash--info {
+  background: var(--mistica-color-infoLow);
+  color: var(--mistica-color-infoHigh);
+}
+
+/* ============================================================================
+ * 7. Tags — badges de estado
+ *
+ * En Mistica React: <Tag>. Tonos: success / warning / error / info /
+ * neutral / brand. Border-radius canónico para tag = 0px (rectangular).
+ * ========================================================================== */
+
+.tag {
+  display: inline-block;
+  padding: var(--ofelia-spacing-xs) var(--ofelia-spacing-sm);
+  font-size: var(--mistica-font-size-indicator);
+  font-weight: var(--mistica-font-weight-indicator);
+  line-height: var(--mistica-line-height-indicator);
+  border-radius: var(--mistica-border-radius-tag);
+  background: var(--mistica-color-neutralLow);
+  color: var(--mistica-color-neutralHigh);
+  white-space: nowrap;
+}
+
+.tag--success {
+  background: var(--mistica-color-successLow);
+  color: var(--mistica-color-successHigh);
+}
+
+.tag--warning {
+  background: var(--mistica-color-warningLow);
+  color: var(--mistica-color-warningHigh);
+}
+
+.tag--error {
+  background: var(--mistica-color-errorLow);
+  color: var(--mistica-color-errorHigh);
+}
+
+.tag--info {
+  background: var(--mistica-color-infoLow);
+  color: var(--mistica-color-infoHigh);
+}
+
+.tag--brand {
+  background: var(--mistica-color-backgroundBrand);
+  color: var(--mistica-color-textPrimaryInverse);
+}
+
+.tag--active {
+  background: var(--mistica-color-successLow);
+  color: var(--mistica-color-successHigh);
+}
+
+.tag--inactive {
+  background: var(--mistica-color-neutralLow);
+  color: var(--mistica-color-neutralHigh);
+}
+
+/* Priority tags (tareas) */
+.tag--priority-low {
+  background: var(--mistica-color-neutralLow);
+  color: var(--mistica-color-neutralHigh);
+}
+
+.tag--priority-medium {
+  background: var(--mistica-color-infoLow);
+  color: var(--mistica-color-infoHigh);
+}
+
+.tag--priority-high {
+  background: var(--mistica-color-warningLow);
+  color: var(--mistica-color-warningHigh);
+}
+
+.tag--priority-urgente {
+  background: var(--mistica-color-errorLow);
+  color: var(--mistica-color-errorHigh);
+}
+
+/* ============================================================================
+ * 8. Buttons — equivalentes a <ButtonPrimary>, <ButtonSecondary>, etc.
+ *
+ * Border-radius canónico para botones: 4px (--mistica-border-radius-button).
+ * ========================================================================== */
+
+.btn {
+  display: inline-block;
+  padding: var(--ofelia-spacing-sm) var(--ofelia-spacing-lg);
+  font-family: inherit;
+  font-size: var(--mistica-font-size-button);
+  font-weight: var(--mistica-font-weight-button);
+  line-height: var(--mistica-line-height-button);
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--mistica-border-radius-button);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: var(--mistica-color-buttonPrimaryBackground);
+  color: var(--mistica-color-textButtonPrimary);
+  border-color: var(--mistica-color-buttonPrimaryBackground);
+}
+
+.btn--primary:hover {
+  background: var(--mistica-color-buttonPrimaryBackgroundHover);
+  border-color: var(--mistica-color-buttonPrimaryBackgroundHover);
+  color: var(--mistica-color-textButtonPrimary);
+}
+
+.btn--primary:active {
+  background: var(--mistica-color-buttonPrimaryBackgroundPressed);
+  border-color: var(--mistica-color-buttonPrimaryBackgroundPressed);
+}
+
+.btn--secondary {
+  background: var(--mistica-color-buttonSecondaryBackground);
+  color: var(--mistica-color-buttonSecondaryText);
+  border-color: var(--mistica-color-buttonSecondaryBorder);
+}
+
+.btn--secondary:hover {
+  background: var(--mistica-color-buttonSecondaryBackgroundHover);
+  color: var(--mistica-color-buttonSecondaryTextHover);
+}
+
+.btn--danger {
+  background: var(--mistica-color-buttonDangerBackground);
+  color: var(--mistica-color-textButtonPrimary);
+}
+
+.btn--danger:hover {
+  background: var(--mistica-color-buttonDangerBackgroundHover);
+}
+
+.btn--link {
+  background: transparent;
+  color: var(--mistica-color-textLink);
+  border: none;
+  padding: var(--ofelia-spacing-xs) var(--ofelia-spacing-sm);
+}
+
+.btn--link:hover {
+  background: var(--mistica-color-buttonLinkBackgroundPressed);
+  text-decoration: underline;
+}
+
+.btn--small {
+  padding: var(--ofelia-spacing-xs) var(--ofelia-spacing-md);
+  font-size: var(--mistica-font-size-text3);
+}
+
+/* ============================================================================
+ * 9. Forms — inputs, selects, textareas
+ * ========================================================================== */
+
+.text-input,
+.select,
+.textarea {
+  display: block;
+  width: 100%;
+  padding: var(--ofelia-spacing-sm) var(--ofelia-spacing-md);
+  font-family: inherit;
+  font-size: var(--mistica-font-size-inputValue);
+  font-weight: var(--mistica-font-weight-inputValue);
+  line-height: var(--mistica-line-height-inputValue);
+  color: var(--mistica-color-textPrimary);
+  background: var(--mistica-color-backgroundInput);
+  border: 1px solid var(--mistica-color-border);
+  border-radius: var(--mistica-border-radius-input);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.text-input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--mistica-color-borderSelected);
+  box-shadow: 0 0 0 2px var(--mistica-color-controlActivated);
+}
+
+.textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofelia-spacing-xs);
+  margin-bottom: var(--ofelia-spacing-md);
+}
+
+.field__label {
+  font-size: var(--mistica-font-size-inputLabel);
+  font-weight: var(--mistica-font-weight-inputLabel);
+  line-height: var(--mistica-line-height-inputLabel);
+  color: var(--mistica-color-textPrimary);
+}
+
+.field__help {
+  font-size: var(--mistica-font-size-inputHelperText);
+  font-weight: var(--mistica-font-weight-inputHelperText);
+  line-height: var(--mistica-line-height-inputHelperText);
+  color: var(--mistica-color-textSecondary);
+}
+
+.field__error {
+  font-size: var(--mistica-font-size-inputHelperText);
+  color: var(--mistica-color-errorHigh);
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofelia-spacing-md);
+  padding: var(--ofelia-spacing-lg);
+  background: var(--mistica-color-backgroundContainer);
+  border: 1px solid var(--mistica-color-borderLow);
+  border-radius: var(--mistica-border-radius-container);
+  margin-bottom: var(--ofelia-spacing-lg);
+}
+
+/* ============================================================================
+ * 10. Breadcrumb — <nav><ol> semántico
+ * ========================================================================== */
+
+.breadcrumb {
+  font-size: var(--mistica-font-size-text3);
+  color: var(--mistica-color-textSecondary);
+  margin-bottom: var(--ofelia-spacing-md);
+}
+
+.breadcrumb ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ofelia-spacing-xs);
+  align-items: center;
+}
+
+.breadcrumb li {
+  display: flex;
+  align-items: center;
+  gap: var(--ofelia-spacing-xs);
+}
+
+.breadcrumb li + li::before {
+  content: '›';
+  color: var(--mistica-color-textSecondary);
+  margin-right: var(--ofelia-spacing-xs);
+}
+
+.breadcrumb a {
+  color: var(--mistica-color-textLink);
+}
+
+.breadcrumb [aria-current="page"] {
+  color: var(--mistica-color-textPrimary);
+  font-weight: 500;
+}
+
+/* ============================================================================
+ * 11. Accordion — <details>/<summary> nativo (Mistica <AccordionItem>)
+ * ========================================================================== */
+
+.accordion-item {
+  border: 1px solid var(--mistica-color-borderLow);
+  border-radius: var(--mistica-border-radius-container);
+  margin-bottom: var(--ofelia-spacing-sm);
+  background: var(--mistica-color-backgroundContainer);
+  overflow: hidden;
+}
+
+.accordion-item__summary {
+  padding: var(--ofelia-spacing-md);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofelia-spacing-xs);
+  transition: background-color 0.15s ease;
+}
+
+.accordion-item__summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-item__summary::after {
+  content: '▾';
+  margin-left: auto;
+  color: var(--mistica-color-textSecondary);
+  transition: transform 0.15s ease;
+}
+
+.accordion-item[open] > .accordion-item__summary::after {
+  transform: rotate(180deg);
+}
+
+.accordion-item__summary:hover {
+  background: var(--mistica-color-neutralLow);
+}
+
+.accordion-item__title {
+  font-weight: 700;
+  color: var(--mistica-color-textPrimary);
+}
+
+.accordion-item__subtitle {
+  color: var(--mistica-color-textSecondary);
+  font-size: var(--mistica-font-size-text3);
+}
+
+.accordion-item__content {
+  padding: 0 var(--ofelia-spacing-md) var(--ofelia-spacing-md);
+  border-top: 1px solid var(--mistica-color-borderLow);
+}
+
+/* ============================================================================
+ * 12. Status pills — estados de expediente/sección/elemento (custom legacy)
+ * ========================================================================== */
+
+.status {
+  display: inline-block;
+  padding: var(--ofelia-spacing-xs) var(--ofelia-spacing-sm);
+  border-radius: var(--mistica-border-radius-indicator);
+  font-size: var(--mistica-font-size-indicator);
+  font-weight: var(--mistica-font-weight-indicator);
+  line-height: var(--mistica-line-height-indicator);
+  white-space: nowrap;
+}
+
+.status--borrador {
+  background: var(--mistica-color-neutralLow);
+  color: var(--mistica-color-neutralHigh);
+}
+
+.status--activo,
+.status--in_progress,
+.status--completed {
+  background: var(--mistica-color-successLow);
+  color: var(--mistica-color-successHigh);
+}
+
+.status--archivado,
+.status--pending {
+  background: var(--mistica-color-warningLow);
+  color: var(--mistica-color-warningHigh);
+}
+
+.status--cancelled {
+  background: var(--mistica-color-errorLow);
+  color: var(--mistica-color-errorHigh);
+}
+
+/* ============================================================================
+ * 13. Utilities varias
+ * ========================================================================== */
+
+.empty {
+  padding: var(--ofelia-spacing-xl);
+  text-align: center;
+  color: var(--mistica-color-textSecondary);
+  background: var(--mistica-color-neutralLow);
+  border-radius: var(--mistica-border-radius-container);
+  border: 1px dashed var(--mistica-color-border);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ofelia-spacing-md);
+  font-size: var(--mistica-font-size-text3);
+  color: var(--mistica-color-textSecondary);
+  margin-top: var(--ofelia-spacing-sm);
+}
+
+/* Responsive container — equivalente a <ResponsiveLayout> de Mistica */
+.mistica-responsive-layout {
+  max-width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: var(--ofelia-spacing-lg);
+}
+
+/* Section divider sutil entre bloques de página */
+.divider {
+  height: 1px;
+  background: var(--mistica-color-borderLow);
+  border: none;
+  margin: var(--ofelia-spacing-lg) 0;
+}
+
+/* ============================================================================
+ * Notas para implementadores
+ * ========================================================================== */
+
+/*
+ * Cómo usar este archivo en una app:
+ *
+ *   <link rel="stylesheet" href="{{ url_for('static', filename='css/mistica.css') }}">
+ *   <link rel="stylesheet" href="{{ url_for('static', filename='css/ofelia-base.css') }}">
+ *
+ *   <body data-mistica-skin="movistar" data-mistica-color-scheme="light">
+ *     <main class="mistica-responsive-layout">
+ *       ... contenido ...
+ *     </main>
+ *   </body>
+ *
+ * NO incluir:
+ *   - <style> propio que defina :root vars (hex hardcoded) — todo color
+ *     debe ser `var(--mistica-color-*)`.
+ *   - `body { background }` — Mistica lo gestiona automáticamente.
+ *   - Clases `mistica-stack`, `mistica-callout`, etc. — son nombres de
+ *     componentes React que NO existen en el build CSS-only. Usar las
+ *     utility classes de este archivo: .stack, .callout, etc.
+ */
