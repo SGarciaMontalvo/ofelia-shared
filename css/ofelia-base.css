@@ -689,6 +689,119 @@ a:hover {
 }
 
 /* ============================================================================
+ * 14. App bar — header sticky + footer minimal (patron visual de
+ *    Mistica <MainNavigationBar> + <HeaderLayout> + <Footer>)
+ *
+    Estos componentes React de Mistica NO tienen contraparte en CSS plano
+    (el bundle compilado tiene 0 utility classes para navigation/header/
+    footer — verificado contra el upstream oficial). Implementamos el
+    patron visualmente canonico con utility classes locales `ofelia-*`
+    consumiendo unicamente los tokens `--mistica-color-*` y
+    `--mistica-spacing-*` ya existentes.
+ * ========================================================================== */
+
+.ofelia-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--mistica-color-backgroundAppBar, var(--mistica-color-backgroundContainer, #ffffff));
+  border-bottom: 1px solid var(--mistica-color-borderLow, var(--mistica-color-border, #dfdbd6));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--ofelia-spacing-md);
+}
+
+.ofelia-topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: min(1400px, 100%);
+  margin: 0 auto;
+  gap: var(--ofelia-spacing-md);
+}
+
+.ofelia-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ofelia-spacing-sm);
+  text-decoration: none;
+  color: inherit;
+  font-family: inherit;
+}
+
+.ofelia-brand:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.ofelia-brand__logo {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--mistica-border-radius-bar, 999px);
+  object-fit: cover;
+}
+
+.ofelia-brand__name {
+  font-size: var(--mistica-font-size-navigationBar, var(--mistica-font-size-text3, 1rem));
+  font-weight: var(--mistica-font-weight-navigationBar, var(--mistica-font-weight-text3, 500));
+  line-height: var(--mistica-line-height-navigationBar, 1.25);
+  color: var(--mistica-color-textPrimary, #262423);
+}
+
+.ofelia-brand--app .ofelia-brand__name {
+  color: var(--mistica-color-textAppBar, var(--mistica-color-textPrimary, #262423));
+}
+
+.ofelia-brand--alexandria {
+  color: var(--mistica-color-textBrand, var(--mistica-color-backgroundBrand, #0066ff));
+}
+
+.ofelia-brand--alexandria:hover {
+  opacity: 0.85;
+}
+
+.ofelia-topbar__spacer {
+  flex: 1;
+}
+
+/* ============================================================================
+ * 15. Bottom bar — footer minimal con release info
+ * ========================================================================== */
+
+.ofelia-bottombar {
+  margin-top: var(--ofelia-spacing-xl);
+  padding: var(--ofelia-spacing-md) var(--ofelia-spacing-lg);
+  border-top: 1px solid var(--mistica-color-borderLow, var(--mistica-color-border, #dfdbd6));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ofelia-spacing-sm);
+  font-size: var(--mistica-font-size-text3, 1rem);
+  color: var(--mistica-color-textSecondary, #605e5c);
+  background: var(--mistica-color-backgroundAlternative, var(--mistica-color-background, #fefaf5));
+}
+
+.ofelia-bottombar__brand {
+  font-weight: 700;
+  color: var(--mistica-color-textPrimary, #262423);
+}
+
+.ofelia-bottombar__release,
+.ofelia-bottombar__repo {
+  color: var(--mistica-color-textLink, var(--mistica-color-backgroundBrand, #0066ff));
+  text-decoration: none;
+}
+
+.ofelia-bottombar__release:hover,
+.ofelia-bottombar__repo:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================================
  * 14. Calendar grid (week view) — no equivalente directo en Mistica React
  * ========================================================================== */
 

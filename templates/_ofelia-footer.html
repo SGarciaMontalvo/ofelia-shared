@@ -1,0 +1,23 @@
+{# Partial: bottom bar (footer minimal con release + repo link)
+
+   Variables esperadas del contexto Flask (inyectadas via context_processor):
+     - app_brand    (str)  "Tareas" / "Bitacora" / ...
+     - app_release  (str)  "2026.09.01" (CalVer del ultimo merge a main)
+     - app_repo     (str)  URL completa al repo del proyecto en GitHub
+     - app_path     (str)  "/tareas/" / "/bitacora/" / ...
+   #}
+<footer class="ofelia-bottombar" role="contentinfo">
+  <div>
+    <span class="ofelia-bottombar__brand">OFELIA</span>
+    <span class="muted"> &middot; {{ app_brand }} &middot; </span>
+    <a class="ofelia-bottombar__release" href="{{ app_repo }}/releases/tag/{{ app_release }}" rel="noopener">
+      release {{ app_release }}
+    </a>
+  </div>
+
+  <div>
+    <a class="ofelia-bottombar__repo" href="{{ app_repo }}" target="_blank" rel="noopener noreferrer">
+      ver repositorio
+    </a>
+  </div>
+</footer>

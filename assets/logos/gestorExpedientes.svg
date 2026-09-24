@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <rect width="48" height="48" rx="8" fill="var(--mistica-color-backgroundBrand, #0066ff)"/>
+  <path d="M16 14h12l5 5v15a2 2 0 0 1-2 2H16a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2z" fill="none" stroke="var(--mistica-color-textPrimaryInverse, #ffffff)" stroke-width="2"/>
+  <path d="M28 14v5h5" fill="none" stroke="var(--mistica-color-textPrimaryInverse, #ffffff)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M19 25h10M19 29h10M19 33h6" stroke="var(--mistica-color-textPrimaryInverse, #ffffff)" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

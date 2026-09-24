@@ -1,0 +1,30 @@
+{# Partial: top bar (header sticky)
+
+   Replica visual de los componentes React MainNavigationBar y
+   HeaderLayout de Mistica, implementada en CSS utility classes
+   `ofelia-*` que viven en `ofelia-base.css`. No hay contraparte CSS
+   plano en el bundle oficial de Mistica, asi que este patron canonico
+   se materializa localmente consumiendo unicamente tokens `--mistica-*`.
+
+   Variables esperadas del contexto Flask (inyectadas via
+   context_processor en `app/__init__.py`):
+     - app_brand    (str)  "Tareas" / "Bitacora" / ...
+     - app_logo     (str)  "tareas.svg" / "bitacora.svg" / ...
+     - app_path     (str)  "/tareas/" / "/bitacora/" / ...
+     - alexandria_logo_url (str)  url_for('static', filename='logos/alexandria.png')
+                                 o `static/logos/alexandria.png` si la app no
+                                 tiene esa ruta.
+   #}
+<header class="ofelia-topbar" role="banner">
+  <div class="ofelia-topbar__inner">
+    <a class="ofelia-brand ofelia-brand--alexandria" href="/" aria-label="Ir a Alexandria (launcher general)">
+      <img class="ofelia-brand__logo" src="{{ alexandria_logo_url }}" alt="Alexandria" />
+      <span class="ofelia-brand__name">Alexandria</span>
+    </a>
+
+    <div class="ofelia-brand ofelia-brand--app" aria-current="page">
+      <img class="ofelia-brand__logo" src="{{ url_for('static', filename='logos/' ~ app_logo) }}" alt="{{ app_brand }}" />
+      <span class="ofelia-brand__name">{{ app_brand }}</span>
+    </div>
+  </div>
+</header>
