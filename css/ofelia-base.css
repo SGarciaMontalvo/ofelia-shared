@@ -688,6 +688,90 @@ a:hover {
 }
 
 /* ============================================================================
+ * 14. Calendar grid (week view) — no equivalente directo en Mistica React
+ * ========================================================================== */
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--ofelia-spacing-sm);
+}
+
+@media (max-width: 768px) {
+  .calendar-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.day-cell {
+  background: var(--mistica-color-backgroundContainer);
+  border: 1px solid var(--mistica-color-borderLow);
+  border-radius: var(--mistica-border-radius-container);
+  padding: var(--ofelia-spacing-sm);
+  min-height: 8rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ofelia-spacing-xs);
+}
+
+.day-cell--today {
+  border-color: var(--mistica-color-borderSelected);
+  box-shadow: 0 0 0 1px var(--mistica-color-borderSelected);
+}
+
+.day-cell h3 {
+  margin: 0 0 var(--ofelia-spacing-xs) 0;
+  font-size: var(--mistica-font-size-text3);
+  font-weight: var(--mistica-font-weight-text3);
+  color: var(--mistica-color-textSecondary);
+  border-bottom: 1px solid var(--mistica-color-borderLow);
+  padding-bottom: var(--ofelia-spacing-xs);
+}
+
+.day-task {
+  display: block;
+  padding: var(--ofelia-spacing-xs) var(--ofelia-spacing-sm);
+  font-size: var(--mistica-font-size-text3);
+  border-radius: var(--mistica-border-radius-tag);
+  border-left: 3px solid var(--mistica-color-neutralMedium);
+  background: var(--mistica-color-neutralLow);
+  color: var(--mistica-color-textPrimary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.day-task a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.day-task a:hover {
+  color: var(--mistica-color-textLink);
+  text-decoration: underline;
+}
+
+.day-task--priority-low {
+  border-left-color: var(--mistica-color-neutralMedium);
+  background: var(--mistica-color-neutralLow);
+}
+
+.day-task--priority-medium {
+  border-left-color: var(--mistica-color-info);
+  background: var(--mistica-color-infoLow);
+}
+
+.day-task--priority-high {
+  border-left-color: var(--mistica-color-warning);
+  background: var(--mistica-color-warningLow);
+}
+
+.day-task--priority-urgente {
+  border-left-color: var(--mistica-color-error);
+  background: var(--mistica-color-errorLow);
+}
+
+/* ============================================================================
  * Notas para implementadores
  * ========================================================================== */
 
