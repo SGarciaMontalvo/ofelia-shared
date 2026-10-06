@@ -1,0 +1,130 @@
+/**
+ * AppBrandHeader.tsx — header compartido para apps independientes bajo Alexandria
+ *
+ * Implementación canónica del header corporativo conforme al playbook
+ * /home/deploy/.pi/odd/transversal/ofelia-header.md (v2, 2026-10-06).
+ *
+ * Cómo integrar en una app React+Mística independiente (e.g.,
+ * tareas, bitácora, ofelia, gestorExpedientes, gestorSistemaCalidad,
+ * ofelia-frontend, ...):
+ *
+ *  1. Copiar este archivo a `frontend/src/componentes/AppBrandHeader.tsx`
+ *     (o el nombre que el proyecto prefiera).
+ *  2. Asegurarse de que el `<ThemeContextProvider>` del `App` raíz
+ *     usa `getTelefonicaSkin()` (default Mística Telefónica; ver
+ *     skill mistica-react).
+ *  3. En `App.tsx`, reemplazar el `<MainNavigationBar>` ad-hoc por:
+ *
+ *         <AppBrandHeader
+ *           appName="Tareas"
+ *           appLogoUrl="/static/logos/tareas-white.svg"
+ *           right={<SettingsButton onClick={() => setSettingsOpen(true)} />}
+ *         />
+ *
+ *  4. Crear el logo blanco de la app como SVG en `static/logos/`
+ *     (o en `mistica-shared/assets/logos/` para reutilizar entre apps).
+ *
+ * Premisa arquitectónica: NO existe "suite OFELIA". Cada app es
+ * independiente. `ofelia` (chatbot) es una app más. La única capa
+ * común visible al usuario es el launcher Alexandria. Este header
+ * expresa la marca visual corporativa compartida (#0066FF light,
+ * #000522 dark) sin imponerse sobre la identidad de cada app
+ * (logo + nombre propios en el slot izquierdo).
+ *
+ * Decisiones cerradas del playbook (NO cambiar sin actualizar el
+ * playbook primero):
+ *   - Fondo: Mística `variant="brand"` → #0066FF (light) / #000522 (dark)
+ *   - Identidad izq: el logo de cada app (no logo Alexandria ni OFELIA)
+ *   - Texto: nombre de la app en bold blanco
+ *   - Slot derecho: ⚙ → SettingsModal (issue #27)
+ *
+ * Cosas a NO hacer:
+ *   - Hardcodear `#0066ff` o `#000522` en CSS. Siempre
+ *     `vars.colors.navigationBarBackground` (que Mística mapea
+ *     según colorScheme).
+ *   - Añadir `withBorder={true}` si el fondo azul ya marca
+ *     separación suficiente.
+ *   - Pasar `headline` (Mística no expone esa prop en
+ *     MainNavigationBar; el nombre va DENTRO del logo).
+ *   - Replicar la navegación OFELIA/Tareas/Bitácora/Expedientes/Calidad
+ *     en `sections` — esa navegación vive en el body, no en el header.
+ *     El header es solo: logo app + nombre app + slot derecho.
+ */
+
+import * as React from 'react';
+import {MainNavigationBar} from '@telefonica/mistica';
+
+export type AppBrandHeaderProps = {
+  /** Nombre visible de la app en el header ("Tareas", "Bitácora", "ofelia", ...). */
+  appName: string;
+  /** URL al logo en blanco de la app (SVG preferentemente). */
+  appLogoUrl?: string;
+  /** Slot derecho del header. Convencional: botón ⚙ → SettingsModal. */
+  right?: React.ReactElement;
+  /** Si true, el header se mantiene fijo al hacer scroll (default true). */
+  topFixed?: boolean;
+};
+
+/**
+ * Header corporativo para apps independientes bajo el launcher
+ * Alexandria. Wrapper sobre <MainNavigationBar variant="brand">.
+ *
+ * Si tu app necesita slots adicionales, pásalos vía props. Por
+ * defecto, las apps independientes NO tienen `sections` (la
+ * navegación entre apps vive en el body / launcher Alexandria,
+ * NO en este header).
+ */
+export const AppBrandHeader = ({
+  appName,
+  appLogoUrl,
+  right,
+  topFixed = true,
+}: AppBrandHeaderProps): JSX.Element => {
+  const logoElement = (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 12,
+      }}
+    >
+      {appLogoUrl && (
+        <img
+          src={appLogoUrl}
+          alt={`${appName} logo`}
+          aria-hidden={false}
+          style={{
+            height: 24,
+            width: 'auto',
+            display: 'block',
+          }}
+        />
+      )}
+      <span
+        style={{
+          color: '#FFFFFF',
+          fontFamily: "'Telefonica Sans', 'Helvetica', 'Arial', sans-serif",
+          fontWeight: 700,
+          fontSize: 16,
+          lineHeight: '24px',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {appName}
+      </span>
+    </span>
+  );
+
+  return (
+    <MainNavigationBar
+      variant="brand"
+      logo={logoElement}
+      sections={[]}
+      right={right}
+      topFixed={topFixed}
+      withBorder={false}
+    />
+  );
+};
+
+export default AppBrandHeader;
